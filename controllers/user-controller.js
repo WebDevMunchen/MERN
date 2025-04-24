@@ -63,12 +63,11 @@ const getUser = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    if (!findUser) {
+    const user = User.findById(id);
+    
+    if (!user) {
       res.status(404).send("User not found");
     }
-
-    const user = User.findById(id);
-
     res.status(200).json(user);
   } catch (error) {
     console.log(error);
