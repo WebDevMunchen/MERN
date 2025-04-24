@@ -1,15 +1,18 @@
-require("dotenv/config")
-require("./db.js")
+require("dotenv/config");
+require("./db.js");
 
-const express = require("express")
-const cors = require("cors")
-const port = process.env.PORT || 3000
+const express = require("express");
+const cors = require("cors");
+const userRouter = require("./routes/user-route.js");
+const port = process.env.PORT || 3000;
 
-const app = express()
+const app = express();
 
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
+
+app.use("/user", userRouter);
 
 app.listen(port, () => {
-    console.log(`App is running on: http://localhost:${port}`)
-})
+  console.log(`App is running on: http://localhost:${port}`);
+});
