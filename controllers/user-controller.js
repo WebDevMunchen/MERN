@@ -1,16 +1,56 @@
 const User = require("../models/user-model");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const registerUser = async (req, res, next) => {
   try {
     const { email, password, role } = req.body;
 
-    const newUser = await User.create({ email, password, role });
+    const hash = await bcrypt.hash(password, 10);
 
-    res.status(201).json(newUser);
+    const newUser = await User.create({ email, password: hash, role });
+
+    res.status(201).json({ email: newUser.email, id: newUser._id });
   } catch (error) {
     console.log(error);
     res.status(500).send("Something went wrong!");
   }
+};
+
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) {
+      throw new Error("User not found!");
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+
+    if (!match) {
+      throw new Error("Incorrect password!");
+    }
+
+    const payload = { id: user._id, email: user.email };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "480m",
+    });
+
+    res
+      .cookie("access_token", token, { httpOnly: true, maxAge: 28800000 })
+      .json(payload);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const logout = async (req, res, next) => {
+  res
+    .cookie("access_token", "", { httpOnly: true, maxAge: 0 })
+    .json({ success: true });
 };
 
 const updateUser = async (req, res, next) => {
@@ -63,11 +103,11 @@ const getUser = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    if (!findUser) {
+    const user = await User.findById(id);
+
+    if (!user) {
       res.status(404).send("User not found");
     }
-
-    const user = User.findById(id);
 
     res.status(200).json(user);
   } catch (error) {
@@ -76,9 +116,24 @@ const getUser = async (req, res, next) => {
   }
 };
 
+const getProfile = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+
+    const user = await User.findById(id);
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Something went wrong!");
+  }
+};
 module.exports = {
   registerUser,
   updateUser,
   deleteUser,
   getUser,
+  getProfile,
+  login,
+  logout,
 };
