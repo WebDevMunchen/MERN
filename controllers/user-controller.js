@@ -9,7 +9,7 @@ const registerUser = async (req, res, next) => {
     res.status(201).json(newUser);
   } catch (error) {
     console.log(error);
-    res.status(500).send("Something went wrong!");
+    return res.status(500).send("Something went wrong!");
   }
 };
 
@@ -21,7 +21,7 @@ const updateUser = async (req, res, next) => {
     const findUser = await User.findById(id);
 
     if (!findUser) {
-      res.status(404).send("User not found");
+      return res.status(404).send("User not found");
     }
 
     const updatedUser = {
@@ -36,7 +36,7 @@ const updateUser = async (req, res, next) => {
     res.status(201).json(updateUser);
   } catch (error) {
     console.log(error);
-    res.status(500).send("Something went wrong!");
+    return res.status(500).send("Something went wrong!");
   }
 };
 
@@ -47,7 +47,7 @@ const deleteUser = async (req, res, next) => {
     const findUser = await User.findById(id);
 
     if (!findUser) {
-      res.status(404).send("User not found");
+      return res.status(404).send("User not found");
     }
 
     const deleteUser = await User.findByIdAndDelete(id);
@@ -55,7 +55,7 @@ const deleteUser = async (req, res, next) => {
     res.status(200).send("User deleted!");
   } catch (error) {
     console.log(error);
-    res.status(500).send("Something went wrong!");
+    return res.status(500).send("Something went wrong!");
   }
 };
 
@@ -64,14 +64,14 @@ const getUser = async (req, res, next) => {
     const { id } = req.params;
 
     const user = User.findById(id);
-    
+
     if (!user) {
-      res.status(404).send("User not found");
+      return res.status(404).send("User not found");
     }
     res.status(200).json(user);
   } catch (error) {
     console.log(error);
-    res.status(500).send("Something went wrong!");
+    return res.status(500).send("Something went wrong!");
   }
 };
 
