@@ -1,4 +1,5 @@
 const User = require("../models/user-model");
+const ErrorResponse = require("../utils/ErrorResponse.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -12,8 +13,7 @@ const registerUser = async (req, res, next) => {
 
     res.status(201).json({ email: newUser.email, id: newUser._id });
   } catch (error) {
-    console.log(error);
-    return res.status(500).send("Something went wrong!");
+    next(error);
   }
 };
 
@@ -24,13 +24,13 @@ const login = async (req, res, next) => {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      throw new Error("User not found!");
+      throw new ErrorResponse("User not found!", 404);
     }
 
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
-      throw new Error("Incorrect password!");
+      throw new ErrorResponse("Incorrect password!", 401);
     }
 
     const payload = { id: user._id, email: user.email };
@@ -43,8 +43,7 @@ const login = async (req, res, next) => {
       .cookie("access_token", token, { httpOnly: true, maxAge: 28800000 })
       .json(payload);
   } catch (error) {
-    console.log(error);
-    return res.status(500).send("Something went wrong!");
+    next(error);
   }
 };
 
@@ -62,7 +61,7 @@ const updateUser = async (req, res, next) => {
     const findUser = await User.findById(id);
 
     if (!findUser) {
-      return res.status(404).send("User not found");
+      throw new ErrorResponse("User not found", 404);
     }
 
     const updatedUser = {
@@ -76,8 +75,7 @@ const updateUser = async (req, res, next) => {
 
     res.status(201).json(updateUser);
   } catch (error) {
-    console.log(error);
-    return res.status(500).send("Something went wrong!");
+    next(error);
   }
 };
 
@@ -88,15 +86,14 @@ const deleteUser = async (req, res, next) => {
     const findUser = await User.findById(id);
 
     if (!findUser) {
-      return res.status(404).send("User not found");
+      throw new ErrorResponse("User not found", 404);
     }
 
     const deleteUser = await User.findByIdAndDelete(id);
 
     res.status(200).send("User deleted!");
   } catch (error) {
-    console.log(error);
-    return res.status(500).send("Something went wrong!");
+    next(error);
   }
 };
 
@@ -107,13 +104,12 @@ const getUser = async (req, res, next) => {
     const user = await User.findById(id);
 
     if (!user) {
-      return res.status(404).send("User not found");
+      throw new ErrorResponse("User not found", 404);
     }
 
     res.status(200).json(user);
   } catch (error) {
-    console.log(error);
-    return res.status(500).send("Something went wrong!");
+    next(error);
   }
 };
 
@@ -124,13 +120,12 @@ const getProfile = async (req, res, next) => {
     const user = await User.findById(id);
 
     if (!user) {
-      throw new Error("User not found!");
+      throw new ErrorResponse("User not found", 404);
     }
 
     res.status(200).json(user);
   } catch (error) {
-    console.log(error);
-    return res.status(500).send("Something went wrong!");
+    next(error);
   }
 };
 module.exports = {
