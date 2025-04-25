@@ -63,7 +63,7 @@ const getUser = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    const user = User.findById(id);
+    const user = await User.findById(id);
 
     if (!user) {
       return res.status(404).send("User not found");
