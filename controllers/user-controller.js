@@ -6,6 +6,12 @@ const registerUser = async (req, res, next) => {
   try {
     const { email, password, role } = req.body;
 
+    const findUser = await User.findOne({ email });
+
+    if (findUser) {
+      return res.status(409).send("User already exists!");
+    }
+
     const hash = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({ email, password: hash, role });
@@ -24,13 +30,13 @@ const login = async (req, res, next) => {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      throw new Error("User not found!");
+      return res.status(404).send("User not found!");
     }
 
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
-      throw new Error("Incorrect password!");
+      return res.status(401).send("Incorrect password");
     }
 
     const payload = { id: user._id, email: user.email };
@@ -62,7 +68,7 @@ const updateUser = async (req, res, next) => {
     const findUser = await User.findById(id);
 
     if (!findUser) {
-      return res.status(404).send("User not found");
+      return res.status(404).send("User not found!");
     }
 
     const updatedUser = {
@@ -88,7 +94,7 @@ const deleteUser = async (req, res, next) => {
     const findUser = await User.findById(id);
 
     if (!findUser) {
-      return res.status(404).send("User not found");
+      return res.status(404).send("User not found!");
     }
 
     const deleteUser = await User.findByIdAndDelete(id);
@@ -107,7 +113,7 @@ const getUser = async (req, res, next) => {
     const user = await User.findById(id);
 
     if (!user) {
-      return res.status(404).send("User not found");
+      return res.status(404).send("User not found!");
     }
 
     res.status(200).json(user);
@@ -124,7 +130,7 @@ const getProfile = async (req, res, next) => {
     const user = await User.findById(id);
 
     if (!user) {
-      throw new Error("User not found!");
+      return res.status(404).send("User not found!");
     }
 
     res.status(200).json(user);
