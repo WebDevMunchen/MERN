@@ -122,6 +122,10 @@ const getProfile = async (req, res, next) => {
 
     const user = await User.findById(id);
 
+    if(!user) {
+      throw new Error("User not found!")
+    }
+
     res.status(200).json(user);
   } catch (error) {
     console.log(error);
