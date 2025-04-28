@@ -22,6 +22,15 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.pre("findOne", function (next) {
+  const query = this.getQuery();
+
+  if (query.email) {
+    query.email = query.email.toLowerCase();
+  }
+  next();
+});
+
 const User = model("User", userSchema);
 
 module.exports = User;
