@@ -1,27 +1,24 @@
 const User = require("../models/user-model");
+const asyncWrapper = require("../utils/asyncWrapper.js");
 const ErrorResponse = require("../utils/ErrorResponse.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const registerUser = async (req, res, next) => {
-  try {
-    const { email, password, role } = req.body;
+const registerUser = asyncWrapper(async (req, res, next) => {
+  const { email, password, role } = req.body;
 
-    const findUser = await User.findOne({ email });
+  const findUser = await User.findOne({ email });
 
-    if (findUser) {
-      throw new ErrorResponse("User already exists!", 409);
-    }
-
-    const newUser = await User.create({ email, password, role });
-
-    res.status(201).json({ email: newUser.email, id: newUser._id });
-  } catch (error) {
-    next(error);
+  if (findUser) {
+    throw new ErrorResponse("User already exists!", 409);
   }
-};
 
-const login = async (req, res, next) => {
+  const newUser = await User.create({ email, password, role });
+
+  res.status(201).json({ email: newUser.email, id: newUser._id });
+});
+
+const login = asyncWrapper(async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -49,15 +46,15 @@ const login = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+});
 
-const logout = async (req, res, next) => {
+const logout = asyncWrapper(async (req, res, next) => {
   res
     .cookie("access_token", "", { httpOnly: true, maxAge: 0 })
     .json({ success: true });
-};
+});
 
-const updateUser = async (req, res, next) => {
+const updateUser = asyncWrapper(async (req, res, next) => {
   try {
     const { email, role } = req.body;
     const { id } = req.params;
@@ -81,9 +78,9 @@ const updateUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+});
 
-const deleteUser = async (req, res, next) => {
+const deleteUser = asyncWrapper(async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -99,9 +96,9 @@ const deleteUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+});
 
-const getUser = async (req, res, next) => {
+const getUser = asyncWrapper(async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -115,9 +112,9 @@ const getUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+});
 
-const getProfile = async (req, res, next) => {
+const getProfile = asyncWrapper(async (req, res, next) => {
   try {
     const { id } = req.user;
 
@@ -131,7 +128,8 @@ const getProfile = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+});
+
 module.exports = {
   registerUser,
   updateUser,
