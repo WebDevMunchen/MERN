@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import axios from "axios"
+import axiosClient from "../utils/axiosClient";
 
 export default function Login() {
   const {
@@ -10,8 +10,8 @@ export default function Login() {
   } = useForm();
 
   const onSubmit = (data) => {
-    axios
-      .post("http://localhost:8000/user/login", data)
+    axiosClient
+      .post("/user/login", data)
       .then((response) => {
         console.log(response.data);
       })

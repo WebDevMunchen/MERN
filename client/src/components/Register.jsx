@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useForm } from "react-hook-form";
+import axiosClient from "../utils/axiosClient";
 
 export default function Register() {
   const {
@@ -10,8 +10,8 @@ export default function Register() {
   } = useForm();
 
   const onSubmit = (data) => {
-    axios
-      .post("http://localhost:8000/user/register", data)
+    axiosClient
+      .post("/user/register", data)
       .then((response) => {
         console.log("Success!");
       })
