@@ -1,7 +1,11 @@
 import { useForm } from "react-hook-form";
 import axiosClient from "../utils/axiosClient";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthProvider";
 
 export default function Login() {
+  const { login } = useContext(AuthContext);
+
   const {
     register,
     handleSubmit,
@@ -10,14 +14,7 @@ export default function Login() {
   } = useForm();
 
   const onSubmit = (data) => {
-    axiosClient
-      .post("/user/login", data)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    login(data);
   };
 
   return (
