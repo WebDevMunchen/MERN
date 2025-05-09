@@ -7,12 +7,12 @@ import Register from "./components/Register";
 function App() {
   return (
     <>
-    <nav className="navigation">
-    <NavLink to={"/"}>Home</NavLink>
-    <NavLink to={"/login"}>Login</NavLink>
-      <NavLink to={"/register"}>Register</NavLink>
-
-    </nav>
+      <nav className="navigation">
+        <NavLink to={"/"}>Home</NavLink>
+        <NavLink to={"/login"}>Login</NavLink>
+        <NavLink to={"/register"}>Register</NavLink>
+      </nav>
+      
       <Routes>
         <Route path={"/"} element={<Home />} />
         <Route path={"/login"} element={<Login />} />
