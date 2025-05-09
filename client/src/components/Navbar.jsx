@@ -3,11 +3,11 @@ import { AuthContext } from "../context/AuthProvider";
 import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
-  const { isloading, user, logout } = useContext(AuthContext);
+  const { isLoading, user, logout } = useContext(AuthContext);
 
   return (
     <nav className="navigation">
-      {!isloading && (
+      {!isLoading && (
         <>
           <NavLink to={"/"}>Home</NavLink>
 
