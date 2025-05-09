@@ -56,7 +56,7 @@ export default function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ login, logout, user }}>
+    <AuthContext.Provider value={{ isLoading, login, logout, user }}>
       {children}
     </AuthContext.Provider>
   );
