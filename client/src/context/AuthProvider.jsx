@@ -15,6 +15,7 @@ export default function AuthProvider({ children }) {
       .get("/user/getProfile")
       .then((response) => {
         setUser(response.data);
+        console.log(response.data)
       })
       .catch((error) => {
         console.log(console.error);
@@ -39,9 +40,9 @@ export default function AuthProvider({ children }) {
       });
   };
 
-  const logout = async (data) => {
+  const logout = async () => {
     axiosClient
-      .post("/user/logout", data)
+      .put("/user/logout")
       .then((response) => {
         setUser(null);
         navigate("/");
@@ -55,7 +56,7 @@ export default function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ login, logout }}>
+    <AuthContext.Provider value={{ login, logout, user }}>
       {children}
     </AuthContext.Provider>
   );
