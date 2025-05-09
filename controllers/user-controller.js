@@ -19,7 +19,6 @@ const registerUser = asyncWrapper(async (req, res, next) => {
 });
 
 const login = asyncWrapper(async (req, res, next) => {
-  try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email }).select("+password");
@@ -43,9 +42,6 @@ const login = asyncWrapper(async (req, res, next) => {
     res
       .cookie("access_token", token, { httpOnly: true, maxAge: 28800000 })
       .json(payload);
-  } catch (error) {
-    next(error);
-  }
 });
 
 const logout = asyncWrapper(async (req, res, next) => {
@@ -55,7 +51,6 @@ const logout = asyncWrapper(async (req, res, next) => {
 });
 
 const updateUser = asyncWrapper(async (req, res, next) => {
-  try {
     const { email, role } = req.body;
     const { id } = req.params;
 
@@ -75,13 +70,9 @@ const updateUser = asyncWrapper(async (req, res, next) => {
     });
 
     res.status(201).json(updateUser);
-  } catch (error) {
-    next(error);
-  }
 });
 
 const deleteUser = asyncWrapper(async (req, res, next) => {
-  try {
     const { id } = req.params;
 
     const findUser = await User.findById(id);
@@ -93,13 +84,9 @@ const deleteUser = asyncWrapper(async (req, res, next) => {
     const deleteUser = await User.findByIdAndDelete(id);
 
     res.status(200).send("User deleted!");
-  } catch (error) {
-    next(error);
-  }
 });
 
 const getUser = asyncWrapper(async (req, res, next) => {
-  try {
     const { id } = req.params;
 
     const user = await User.findById(id);
@@ -109,13 +96,9 @@ const getUser = asyncWrapper(async (req, res, next) => {
     }
 
     res.status(200).json(user);
-  } catch (error) {
-    next(error);
-  }
 });
 
 const getProfile = asyncWrapper(async (req, res, next) => {
-  try {
     const { id } = req.user;
 
     const user = await User.findById(id);
@@ -125,9 +108,6 @@ const getProfile = asyncWrapper(async (req, res, next) => {
     }
 
     res.status(200).json(user);
-  } catch (error) {
-    next(error);
-  }
 });
 
 module.exports = {
