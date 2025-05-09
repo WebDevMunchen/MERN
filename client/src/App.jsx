@@ -21,7 +21,10 @@ function App() {
 
         <Route path="/" element={<Protected />}>
           <Route path="events" element={<Events />} />
-          <Route path="/admin" element={<Authorize role="user" />}>
+          <Route
+            path="/admin"
+            element={<Authorize roles={["user", "admin"]} />}
+          >
             <Route path="dashboard" element={<Dashboard />} />
           </Route>
         </Route>
