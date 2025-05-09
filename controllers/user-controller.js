@@ -19,33 +19,29 @@ const registerUser = asyncWrapper(async (req, res, next) => {
 });
 
 const login = asyncWrapper(async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ email }).select("+password");
 
-    if (!user) {
-      throw new ErrorResponse("User not found!", 404);
-    }
-
-    const match = await bcrypt.compare(password, user.password);
-
-    if (!match) {
-      throw new ErrorResponse("Incorrect password!", 401);
-    }
-
-    const payload = { id: user._id, email: user.email };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "480m",
-    });
-
-    res
-      .cookie("access_token", token, { httpOnly: true, maxAge: 28800000 })
-      .json(payload);
-  } catch (error) {
-    next(error);
+  if (!user) {
+    throw new ErrorResponse("User not found!", 404);
   }
+
+  const match = await bcrypt.compare(password, user.password);
+
+  if (!match) {
+    throw new ErrorResponse("Incorrect password!", 401);
+  }
+
+  const payload = { id: user._id, email: user.email };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: "480m",
+  });
+
+  res
+    .cookie("access_token", token, { httpOnly: true, maxAge: 28800000 })
+    .json(payload);
 });
 
 const logout = asyncWrapper(async (req, res, next) => {
@@ -55,79 +51,63 @@ const logout = asyncWrapper(async (req, res, next) => {
 });
 
 const updateUser = asyncWrapper(async (req, res, next) => {
-  try {
-    const { email, role } = req.body;
-    const { id } = req.params;
+  const { email, role } = req.body;
+  const { id } = req.params;
 
-    const findUser = await User.findById(id);
+  const findUser = await User.findById(id);
 
-    if (!findUser) {
-      throw new ErrorResponse("User not found", 404);
-    }
-
-    const updatedUser = {
-      email,
-      role,
-    };
-
-    const updateUser = await User.findByIdAndUpdate(id, updatedUser, {
-      new: true,
-    });
-
-    res.status(201).json(updateUser);
-  } catch (error) {
-    next(error);
+  if (!findUser) {
+    throw new ErrorResponse("User not found", 404);
   }
+
+  const updatedUser = {
+    email,
+    role,
+  };
+
+  const updateUser = await User.findByIdAndUpdate(id, updatedUser, {
+    new: true,
+  });
+
+  res.status(201).json(updateUser);
 });
 
 const deleteUser = asyncWrapper(async (req, res, next) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    const findUser = await User.findById(id);
+  const findUser = await User.findById(id);
 
-    if (!findUser) {
-      throw new ErrorResponse("User not found", 404);
-    }
-
-    const deleteUser = await User.findByIdAndDelete(id);
-
-    res.status(200).send("User deleted!");
-  } catch (error) {
-    next(error);
+  if (!findUser) {
+    throw new ErrorResponse("User not found", 404);
   }
+
+  const deleteUser = await User.findByIdAndDelete(id);
+
+  res.status(200).send("User deleted!");
 });
 
 const getUser = asyncWrapper(async (req, res, next) => {
-  try {
-    const { id } = req.params;
+  const { id } = req.params;
 
-    const user = await User.findById(id);
+  const user = await User.findById(id);
 
-    if (!user) {
-      throw new ErrorResponse("User not found", 404);
-    }
-
-    res.status(200).json(user);
-  } catch (error) {
-    next(error);
+  if (!user) {
+    throw new ErrorResponse("User not found", 404);
   }
+
+  res.status(200).json(user);
 });
 
 const getProfile = asyncWrapper(async (req, res, next) => {
-  try {
-    const { id } = req.user;
+  const { id } = req.user;
 
-    const user = await User.findById(id);
+  const user = await User.findById(id);
 
-    if (!user) {
-      throw new ErrorResponse("User not found", 404);
-    }
-
-    res.status(200).json(user);
-  } catch (error) {
-    next(error);
+  if (!user) {
+    throw new ErrorResponse("User not found", 404);
   }
+
+  res.status(200).json(user);
 });
 
 module.exports = {
